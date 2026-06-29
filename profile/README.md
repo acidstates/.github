@@ -1,6 +1,9 @@
 <div align="center">
 
-# AcidStates
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+  <img alt="ACID//STATES" src="assets/logo-light.svg" width="520">
+</picture>
 
 ### Spin. State. Repeat.
 
