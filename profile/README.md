@@ -20,54 +20,98 @@ and the stands that test, catalog, and ship games.
 
 ```mermaid
 flowchart TD
-  subgraph CORE["Platform"]
-    FW["Frameworks\ngamecore · gamemodule (RGS)"]
-    TOOLS["Shared libs · Tools\nprotocol · rng · math · catalog · simbot"]
-    STANDS["Stands\nstatehub (QA) · betmanager (accounts/analytics)"]
-  end
-  CORE -->|versioned packages| GAMES["Game modules\nbackend + client — one repo each"]
-  GAMES -->|tag → build → deploy| LIVE["Live stands & operators"]
-  GAMES -->|registered in| CAT["Game catalog"]
-  CAT --> STANDS
+  PLAT["platform — the monorepo<br/>frameworks: gamecore (TS + PixiJS v8) · gamemodule (Python RGS)<br/>shared + tools: protocol · core · ui · gc-sdk · brands · rng · mathengine<br/>admin-ui · simbot · registry · vector-fit · vf-lab"]
+  PLAT -->|publishes SemVer| PKG["@acidstates/gamecore · protocol · core · ui · gc-sdk · brands → GitHub Packages<br/>acidstates-gamemodule → PEP 503 index on DO Spaces"]
+  PKG -->|installed by| GAMES["game repos — one per game<br/>the-reactor · solvent · game-template<br/>RGS backend + PixiJS client in one monorepo"]
+  GAMES -->|game-manifest.json| CAT["catalog<br/>slug → {module, client} + math versions"]
+  GAMES -->|merge to main| CI["acidstates/workflows<br/>ci → build → DOCR → deploy → healthcheck → auto-rollback"]
+  PLAT -->|merge to main| CI
+  CAT --> STANDS["stands<br/>statehub (QA) · betmanager (accounts · wallet · analytics)"]
+  CI --> LIVE["droplet — game · statehub · betmanager<br/>nginx + oauth2-proxy, GitHub-org SSO on internal hosts"]
+  STANDS --> LIVE
 ```
 
 ## How we build games
 
-> **Install the framework as a package → write the module → its own repo → tag → deploy from the tag.**
+> **Install the framework as a package → write the module → its own repo → merge to `main` → it deploys itself.**
 
 Each game is a small, independent module that consumes a versioned framework — so games ship on
-their own cadence while the platform evolves underneath them.
+their own cadence while the platform evolves underneath them. Deploy hangs on the merge, not on a
+tag: SemVer tags version *packages*, `main` ships *services*, and every accepted deploy gets
+marked with a `deploy/<target>/…` tag after the fact. Every step that ships code to a running service
+health-checks itself and rolls back on failure, so rollback is a fallback, never the first response.
 
 ## Live now
 
-**The Reactor** — a 6×5 periodic-table slot where the whole board lives inside a glass
-aquarium tank: symbols settle under water behind a breathing surface, fed by a neon coolant
-manifold, flanked by lab apparatus. The entire scene is procedural PixiJS v8 — canvas-baked
-chrome, glass and glow, no sprite atlases — with the reels, win engine and RGS math driving it
-underneath.
+**The Reactor** — a 6×5 periodic-table slot whose whole board lives inside a rusted glass tank:
+symbols settle under water behind a breathing surface, nozzles in the lid, coolant piped through
+the base, a painted lab backdrop behind it. The board, the symbols and their VFX are canvas-baked
+procedural PixiJS v8 — no sprite atlas, no Spine — with AVIF set-dressing and an alpha-channel
+WebM fire loop layered around them, and the reels, win engine and RGS math driving it underneath.
+
+**SOLVENT** — a 6×5 / 25-line cascade slot built on reagent flasks. The board tumbles until
+nothing more can be taken off it: an explosion symbol clears the zone around itself for free, just
+to keep the chain alive, a detonator lifts every copy of the symbols it touches and pays for the
+whole group, and free spins swap the roster for value jars that a collector cashes in. Visually
+the opposite bet from The Reactor — a flat printed comic on newsprint, a screen-space halftone
+shader and `tint` instead of PBR and glow, vector-fit scenes and a tiered symbol atlas, with
+procedural code drawing the flask rig and the effects on top.
+
+Both games are pinned in the platform catalog, run on the same RGS framework, and seal their
+payout path with the same framework primitive: a test fails the build the moment a money-moving
+file drifts out of the seal. SOLVENT pins its list file by file — game loop, cascade, blast,
+reels, flasks, free spins, constants, round model — plus the whole settings inheritance chain;
+The Reactor's payout path lives in one module, sealed together with its own settings chain.
 
 ## Repositories
 
 | Repo | What it is |
 |---|---|
-| [`platform`](https://github.com/acidstates/platform) | The monorepo: `gamecore` (TS + PIXI client framework) · `gamemodule` (Python/FastAPI RGS) · shared libs (protocol, rng, math, drawer, ui) · tools (registry/catalog, simbot) · stands (`statehub`, `betmanager`) · the agent knowledge base (`docs/agent`). |
+| [`platform`](https://github.com/acidstates/platform) | The monorepo: `gamecore` (TS + PixiJS client framework) · `gamemodule` (Python/FastAPI RGS) · shared libs (protocol, core, ui, gc-sdk, brands, rng, mathengine, admin-ui, simbot) · tools (registry/catalog, vector-fit, vf-lab, guards, eslint-rules) · stands (`statehub`, `betmanager`) · infra (nginx, oauth2-proxy, demo-gate) · the agent knowledge base (`docs/agent`). |
 | [`the-reactor`](https://github.com/acidstates/the-reactor) | Flagship game — RGS backend + PixiJS client, one monorepo. |
-| [`game-template`](https://github.com/acidstates/game-template) | Starter for new game modules. |
+| [`solvent`](https://github.com/acidstates/solvent) | Second live game — cascade + flasks. Forked from The Reactor's game backend onto the same `gamemodule` framework, with its own comic-styled client. |
+| [`game-template`](https://github.com/acidstates/game-template) | Starter for new game modules: one script renames every identifier, regenerates goldens and runs the new repo's backend gates green. |
+| [`workflows`](https://github.com/acidstates/workflows) | Org-wide reusable GitHub Actions — all deploy logic lives here; working repos carry thin callers only. |
+| [`workspace`](https://github.com/acidstates/workspace) | Umbrella repo: org-wide agent rules (`CLAUDE.md`/`AGENTS.md`), org-level skills, cross-repo specs and shared tooling. |
 
 ## Products
 
 | Surface | What it is |
 |---|---|
-| **gamecore / gamemodule** | The client renderer (TS + PixiJS v8) and the server RGS (Python + FastAPI). |
+| **gamecore / gamemodule** | The client renderer (TS + PixiJS v8) and the server RGS (Python + FastAPI) — the two published products. |
 | **statehub** | QA test-stand — the game catalog with an embedded player, device mockups and test panels. |
-| **betmanager** | Accounts, wallets, and analytics across games, players, and bets. |
-| **catalog** | The registry mapping every game to its pinned `{module, client, drawer}`. |
+| **betmanager** | Accounts, wallets, ledger and cross-game analytics, with its `betmanager-admin` SPA behind GitHub-org SSO. |
+| **catalog** | The registry mapping every game to its pinned `{module, client}` and the math versions its backend will accept. |
+| **simbot** | RTP and compliance simulation — tens of millions of rounds per math version for a certification run, plus `acid-math-gate`, an RTP-corridor check (per-game `math_gate.json`, 100k rounds by default). |
+| **vector-fit / vf-lab** | An SVG scene becomes a typed `layout.json`: the vector stays the source of coordinates, hit-zones and animations, a raster skin is fitted on top. `vf-lab` is the dev-only authoring stand. |
+
+## How it ships
+
+Merging a PR into `main` builds and deploys — no manual SSH, no per-developer setup. The logic
+lives in one place, [`acidstates/workflows`](https://github.com/acidstates/workflows):
+
+| Workflow | What it does |
+|---|---|
+| `ci-game` | PR gates — backend `uv sync + ruff + pyright + pytest`, client `typecheck + build + test` |
+| `build-push-image` | buildx → DigitalOcean Container Registry, tagged by commit SHA |
+| `deploy-container` | ship compose → pull by tag → up → healthcheck → auto-rollback → deploy tag |
+| `deploy-static` | build → backup → rsync → smoke → auto-restore → deploy tag |
+| `deploy-game` | orchestrator: diff-detect backend vs client → ci → build → deploy → register manifest, rebuild catalog |
+| `deploy-infra` | nginx + oauth2-proxy: `nginx -t` → reload → smoke four vhosts and oauth2-proxy `/ping` → restore both on any failure |
+
+A game declares *where* it deploys in its `game-manifest.json` `deploy` block — image, compose
+directory, healthcheck, client directory, smoke host. That block is the entire contract between a
+game repo and the org's CI: `game-template` ships it as `CHANGE-ME` on purpose, and CI refuses to
+ship an unfilled manifest. Deploy is also reachable by hand through `workflow_dispatch` — the
+escape hatch for the day GitHub accepts a merge without emitting a push event — and the gates are
+not skipped when it is used.
 
 ## Agent-ready by design
 
 The codebase ships its own operating manual for AI coding agents: `CLAUDE.md`/`AGENTS.md`
-conventions in every repo, a battle-tested PixiJS hero-VFX style guide distilled from real
-debugging rounds (`platform → docs/agent`), and the official
+conventions cascading from the umbrella repo down into every working repo, a battle-tested PixiJS
+hero-VFX style guide distilled from real debugging rounds (`platform → docs/agent`), a
+machine-readable repo map and a charter of locked decisions, plus the official
 [pixijs-skills](https://github.com/pixijs/pixijs-skills) vendored into `.claude/skills/` with
 org overlays verified against the installed `pixi.js@8.19.0` — so an agent's first drawing
 session already knows the pitfalls a human only learns by shipping.
@@ -75,5 +119,5 @@ session already knows the pitfalls a human only learns by shipping.
 ---
 
 <div align="center">
-<sub>© AcidStates · built for scale, shipped on tags.</sub>
+<sub>© AcidStates · built for scale, shipped on merge.</sub>
 </div>
