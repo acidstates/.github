@@ -20,14 +20,20 @@ and the stands that test, catalog, and ship games.
 
 ```mermaid
 flowchart TD
-  PLAT["platform — the monorepo<br/>frameworks: gamecore (TS + PixiJS v8) · gamemodule (Python RGS)<br/>shared + tools: protocol · core · ui · gc-sdk · brands · rng · mathengine<br/>admin-ui · simbot · registry · vector-fit · vf-lab"]
-  PLAT -->|publishes SemVer| PKG["@acidstates/gamecore · protocol · core · ui · gc-sdk · brands → GitHub Packages<br/>acidstates-gamemodule → PEP 503 index on DO Spaces"]
-  PKG -->|installed by| GAMES["game repos — one per game<br/>the-reactor · solvent · game-template<br/>RGS backend + PixiJS client in one monorepo"]
-  GAMES -->|game-manifest.json| CAT["catalog<br/>slug → {module, client} + math versions"]
-  GAMES -->|merge to main| CI["acidstates/workflows<br/>ci → build → DOCR → deploy → healthcheck → auto-rollback"]
+  PLAT["platform — the monorepo<br/>frameworks · shared libs · tools · stands · infra"]
+  PKG["@acidstates/gamecore · protocol · core · ui · gc-sdk · brands → GitHub Packages<br/>acidstates-gamemodule → PEP 503 index on DO Spaces"]
+  GAMES["game repos — one per game<br/>the-reactor · solvent · game-template"]
+  CAT["catalog<br/>slug → {module, client} + math versions"]
+  CI["acidstates/workflows<br/>ci → build → DOCR → deploy → healthcheck → auto-rollback"]
+  STANDS["stands<br/>statehub (QA) · betmanager (accounts · wallet · analytics)"]
+  LIVE["droplet — game · statehub · betmanager<br/>nginx + oauth2-proxy, GitHub-org SSO on internal hosts"]
+  PLAT -->|publishes SemVer| PKG
+  PKG -->|installed by| GAMES
+  GAMES -->|game-manifest.json| CAT
+  GAMES -->|merge to main| CI
   PLAT -->|merge to main| CI
-  CAT --> STANDS["stands<br/>statehub (QA) · betmanager (accounts · wallet · analytics)"]
-  CI --> LIVE["droplet — game · statehub · betmanager<br/>nginx + oauth2-proxy, GitHub-org SSO on internal hosts"]
+  CAT --> STANDS
+  CI --> LIVE
   STANDS --> LIVE
 ```
 
