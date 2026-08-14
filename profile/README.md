@@ -18,24 +18,16 @@ and the stands that test, catalog, and ship games.
 
 ## Platform at a glance
 
-```mermaid
-flowchart TD
-  PLAT["platform — the monorepo<br/>frameworks · shared libs · tools · stands · infra"]
-  PKG["@acidstates/gamecore · protocol · core · ui · gc-sdk · brands → GitHub Packages<br/>acidstates-gamemodule → PEP 503 index on DO Spaces"]
-  GAMES["game repos — one per game<br/>the-reactor · solvent · game-template"]
-  CAT["catalog<br/>slug → {module, client} + math versions"]
-  CI["acidstates/workflows<br/>ci → build → DOCR → deploy → healthcheck → auto-rollback"]
-  STANDS["stands<br/>statehub (QA) · betmanager (accounts · wallet · analytics)"]
-  LIVE["droplet — game · statehub · betmanager<br/>nginx + oauth2-proxy, GitHub-org SSO on internal hosts"]
-  PLAT -->|publishes SemVer| PKG
-  PKG -->|installed by| GAMES
-  GAMES -->|game-manifest.json| CAT
-  GAMES -->|merge to main| CI
-  PLAT -->|merge to main| CI
-  CAT --> STANDS
-  CI --> LIVE
-  STANDS --> LIVE
-```
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/platform-dark.svg">
+  <img alt="platform publishes versioned packages; game repos install them; a merge to main ships through acidstates/workflows onto the droplet, while game manifests feed the catalog and the stands" src="assets/platform-light.svg" width="600">
+</picture>
+
+<sub><a href="https://github.com/acidstates/.github/blob/main/profile/platform-diagram.mmd">diagram source</a></sub>
+
+</div>
 
 ## How we build games
 
