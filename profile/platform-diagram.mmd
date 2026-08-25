@@ -1,11 +1,11 @@
 flowchart TD
   PLAT["platform — the monorepo — frameworks · shared libs · tools · stands · infra"]
-  PKG["@acidstates/gamecore · protocol · core · ui · gc-sdk · brands → GitHub Packages — acidstates-gamemodule → PEP 503 index on DO Spaces"]
-  GAMES["game repos — one per game — the-reactor · solvent · game-template"]
+  PKG["@acidstates/gamecore · protocol · core · ui · audio · gc-sdk · brands → GitHub Packages — acidstates-gamemodule · acidstates-simbot → PEP 503 index on DO Spaces"]
+  GAMES["game repos — one per game — the-reactor · solvent · game-template → game-template-2.0"]
   CAT["catalog — slug → {module, client} + math versions"]
   CI["acidstates/workflows — ci → build → DOCR → deploy → healthcheck → auto-rollback"]
-  STANDS["stands — statehub (QA) · betmanager (accounts · wallet · analytics)"]
-  LIVE["droplet — game · statehub · betmanager — nginx + oauth2-proxy, GitHub-org SSO on internal hosts"]
+  STANDS["stands — statehub (QA · catalog) · betmanager (accounts · wallet · analytics · admin) · studios (symbol-landing · spin-animation · board-transformation) with MCP"]
+  LIVE["droplet — games · statehub · betmanager · studios — nginx + oauth2-proxy, GitHub-org SSO on internal hosts"]
   PLAT -->|publishes SemVer| PKG
   PKG -->|installed by| GAMES
   GAMES -->|game-manifest.json| CAT
