@@ -31,7 +31,7 @@ PEP 503 index are the ground truth.
   <img alt="platform publishes versioned packages; game repos install them; a merge to main ships through acidstates/workflows onto the droplet, while game manifests feed the catalog and the stands" src="assets/platform-light.svg" width="620">
 </picture>
 
-<sub><a href="https://github.com/acidstates/.github/blob/main/profile/platform-diagram.mmd">diagram source</a> — baked to SVG, both themes from one source</sub>
+<sub>hand-drawn SVG in the brand canon, both themes from one geometry — <a href="https://github.com/acidstates/.github/blob/main/profile/tools/render_platform_diagram.py">generator</a>; edit the generator, never the SVG</sub>
 
 </div>
 
