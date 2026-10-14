@@ -39,7 +39,6 @@ catalog and ship games.
 | **OVERPULL** | [`overpull`](https://github.com/acidstates/overpull) | A crash game: a penguin on a slingshot. Hold the button, the multiplier climbs; let go before the rubber snaps. Every round is provably fair. |
 | starter | [`game-template-2.0`](https://github.com/acidstates/game-template-2.0) | The GitHub template repository that every new game is cut from (`scripts/new-game.py`). |
 
-`the-reactor` is retired. It stays in the organisation as reference code only.
 
 ## How we build games
 
@@ -69,7 +68,6 @@ After Effects and exported to Spine. Code does not draw effects.
 | [`workspace`](https://github.com/acidstates/workspace) | The umbrella repository: the rules for agents in all repositories (`CLAUDE.md`, `AGENTS.md`), organisation skills, cross-repository specs and shared tools. |
 | [`acid-states-website`](https://github.com/acidstates/acid-states-website) | [acidstates.com](https://acidstates.com), the public site. |
 | [`acidstates-architecture`](https://github.com/acidstates/acidstates-architecture) | The architecture maps of the platform and the games, behind GitHub-organisation SSO. |
-| [`the-reactor`](https://github.com/acidstates/the-reactor) | Retired. Reference code only. |
 
 ## Products
 
