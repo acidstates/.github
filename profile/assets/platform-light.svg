@@ -74,7 +74,7 @@
 <text x="700" y="624" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="9.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="start" opacity="1">from a checkout</text>
 </g>
 <g transform="rotate(0.7 1085.0 405.0)"><rect x="937" y="167" width="310" height="490" fill="#171A1D" opacity="0.85"/><rect x="930" y="160" width="310" height="490" fill="#F4F2EC" stroke="#171A1D" stroke-width="2.6"/>
-<text x="952" y="190" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="10.5" font-weight="bold" fill="#767C83" letter-spacing="1.6" text-anchor="start" opacity="1">ACIDSTATES/WORKFLOWS · MERGE TO MAIN</text>
+<text x="952" y="190" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="10.5" font-weight="bold" fill="#767C83" letter-spacing="1.6" text-anchor="start" opacity="1">WORKFLOWS · MERGE TO MAIN</text>
 <rect x="952" y="206" width="266" height="72" fill="#EDEAE1" stroke="#171A1D" stroke-width="2.4"/>
 <text x="966" y="229" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="13.5" font-weight="bold" fill="#171A1D" letter-spacing="0" text-anchor="start" opacity="1">ci-game</text>
 <text x="966" y="247" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="10.5" font-weight="normal" fill="#4A4F55" letter-spacing="0" text-anchor="start" opacity="1">uv sync · ruff · pyright · pytest</text>
@@ -104,9 +104,9 @@
 <path d="M290 600 L330 640 L410 674 L700 690 L950 634" fill="none" stroke="#171A1D" stroke-width="2.2" stroke-dasharray="5 4" marker-end="url(#m)"/>
 <rect x="527.0" y="697" width="262.0" height="15" fill="#E9E5DC" opacity="0.92"/><text x="660" y="708" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="9.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="middle" opacity="1">platform: merge to main ships the stands</text>
 <path d="M848 416 L890 330 L952 250" fill="none" stroke="#3F6B00" stroke-width="3" marker-end="url(#h)"/>
-<rect x="740.3" y="355" width="129.7" height="15" fill="#E9E5DC" opacity="0.92"/><text x="872" y="366" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="9.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="end" opacity="1">game: merge to main</text>
+<rect x="730.3" y="355" width="129.7" height="15" fill="#E9E5DC" opacity="0.92"/><text x="862" y="366" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="9.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="end" opacity="1">game: merge to main</text>
 <path d="M682 575 L900 520 L952 448" fill="none" stroke="#171A1D" stroke-width="2.2" stroke-dasharray="6 5" marker-end="url(#m)"/>
-<rect x="800.55" y="537" width="154.9" height="15" fill="#E9E5DC" opacity="0.92"/><text x="880" y="548" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="9.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="middle" opacity="1">slug → {module, client}</text>
+<rect x="710.55" y="537" width="154.9" height="15" fill="#E9E5DC" opacity="0.92"/><text x="790" y="548" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="9.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="middle" opacity="1">slug → {module, client}</text>
 <text x="40" y="742" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="10.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="start" opacity="1">SemVer tags version packages; a merge to main deploys the dev instance; a release goes out only on the owner's tag</text>
 <text x="40" y="760" font-family="'SFMono-Regular','Menlo','Consolas','Liberation Mono',monospace" font-size="10.5" font-weight="normal" fill="#767C83" letter-spacing="0" text-anchor="start" opacity="1">the seal: a test fails the build when a money-moving file drifts out of compliance_files; the lab gets compliance_version</text>
 </svg>

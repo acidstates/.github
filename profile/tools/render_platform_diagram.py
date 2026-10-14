@@ -170,7 +170,7 @@ def build(p, theme):
 
     # ── SHIP ─────────────────────────────────────────────────────
     o.append(panel(930, 160, 310, 490, p, rot=0.7))
-    o.append(eyebrow(952, 190, "acidstates/workflows · merge to main", p))
+    o.append(eyebrow(952, 190, "workflows · merge to main", p))
     o.append(f'<rect x="952" y="206" width="266" height="72" fill="{p["panel2"]}" stroke="{p["ink"]}" stroke-width="2.4"/>')
     o.append(text(966, 229, "ci-game", 13.5, p, w="bold"))
     o.append(text(966, 247, "uv sync · ruff · pyright · pytest", 10.5, p, p["ink2"]))
@@ -203,9 +203,9 @@ def build(p, theme):
     o.append(arrow([(290, 600), (330, 640), (410, 674), (700, 690), (950, 634)], p, width=2.2, dash="5 4"))
     o.append(edge_label(660, 708, "platform: merge to main ships the stands", p, anchor="middle"))
     o.append(arrow([(848, 416), (890, 330), (952, 250)], p, color=p["hot"], width=3, marker="h"))
-    o.append(edge_label(872, 366, "game: merge to main", p, anchor="end"))
+    o.append(edge_label(862, 366, "game: merge to main", p, anchor="end"))
     o.append(arrow([(682, 575), (900, 520), (952, 448)], p, width=2.2, dash="6 5"))
-    o.append(edge_label(880, 548, "slug → {module, client}", p, anchor="middle"))
+    o.append(edge_label(790, 548, "slug → {module, client}", p, anchor="middle"))
 
     # footer
     o.append(text(40, H - 48, "SemVer tags version packages; a merge to main deploys the dev instance; a release goes out only on the owner's tag", 10.5, p, p["ink3"]))
