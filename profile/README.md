@@ -7,9 +7,9 @@
 
 ### Spin. State. Repeat.
 
-**A slot-games provider platform** — a Python RGS framework, a thin PixiJS client framework,
-a sound passport, a simulator that prints the math passport for the lab, and the stands that
-test, catalog and ship games.
+**A slot-games provider platform**: a Python RGS framework, a thin PixiJS client framework, a
+sound passport, a simulator that prints the math passport for the lab, and the stands that test,
+catalog and ship games.
 
 [acidstates.com](https://acidstates.com)
 
@@ -17,163 +17,134 @@ test, catalog and ship games.
 
 ---
 
-**Live: The Reactor · SOLVENT** — both on `acidstates-gamemodule 0.35` / `@acidstates/gamecore 2.9`,
-deployed on merge, sealed by the same compliance primitive. Versions on this page were read back from
-the registries on 2026-08-25, not copied from `package.json`; `npm view <pkg> dist-tags` and the
-PEP 503 index are the ground truth.
-
 ## Platform at a glance
 
 <div align="center">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/platform-dark.svg">
-  <img alt="platform publishes versioned packages; game repos install them; a merge to main ships through acidstates/workflows onto the droplet, while game manifests feed the catalog and the stands" src="assets/platform-light.svg" width="1000">
+  <img alt="The platform monorepo publishes versioned packages. Game repositories install them. A merge to main deploys the dev instance through acidstates/workflows. A release goes out on the owner's tag. Game manifests feed the catalog and the stands." src="assets/platform-light.svg" width="1000">
 </picture>
 
-<sub>hand-drawn SVG in the brand canon, both themes from one geometry — <a href="https://github.com/acidstates/.github/blob/main/profile/tools/render_platform_diagram.py">generator</a>; edit the generator, never the SVG</sub>
+<sub>A baked SVG in the brand canon, both themes from one geometry. <a href="https://github.com/acidstates/.github/blob/main/profile/tools/render_platform_diagram.py">Generator</a>: change the generator, never the SVG.</sub>
 
 </div>
 
+## Games
+
+| Game | Repository | What it is |
+|---|---|---|
+| **SOLVENT 3** | [`solvent-3`](https://github.com/acidstates/solvent-3) | The live game. A chemistry-lab slot: a 6 x 5 board, 25 lines, explosions and shield fields, six flasks above the reels, free spins. |
+| **SCYTHERS** | [`scythers`](https://github.com/acidstates/scythers) | A bio-lab slot. The backend, math, QA layer and drawer forked from SOLVENT 3; the client is the clean client of the starter. The repository was called `wetlab` until 2026-10-14, and its inner folders still use that name. |
+| **OVERPULL** | [`overpull`](https://github.com/acidstates/overpull) | A crash game: a penguin on a slingshot. Hold the button, the multiplier climbs; let go before the rubber snaps. Every round is provably fair. |
+| starter | [`game-template-2.0`](https://github.com/acidstates/game-template-2.0) | The GitHub template repository that every new game is cut from (`scripts/new-game.py`). |
+
+`the-reactor` is retired. It stays in the organisation as reference code only.
+
 ## How we build games
 
-> **Install the framework as a package → write the module → its own repo → merge to `main` → it deploys itself.**
+> **Install the framework as a package. Write the game in its own repository. Merge to `main`: the dev instance deploys. The owner's tag makes a release.**
 
-Each game is a small, independent module that consumes a versioned framework — so games ship on
-their own cadence while the platform evolves underneath them. Deploy hangs on the merge, not on a
-tag: SemVer tags version *packages*, `main` ships *services*, and every accepted deploy gets marked
-with a `deploy/<target>/…` tag after the fact. Every step that ships code to a running service
-health-checks itself and rolls back on failure, so rollback is a fallback, never the first response.
+Each game is a small, independent repository that installs versioned framework packages. Games
+ship on their own schedule while the platform changes under them. SemVer tags version the
+packages. A merge to `main` deploys the game's dev instance `<slug>-dev`. A release goes out only
+on the owner's tag. Each step that ships code to a running service does a health check and rolls
+back on failure.
 
-The game's logic lives in one sealed file set; everything a stand needs to know about a game is
-declared as data (`game-manifest.json`, `game.config.json`, the sound passport, the math passport)
-rather than read from its sources.
+The game logic that moves money lives in one sealed file set. A stand learns about a game only
+from data that the game declares (`game-manifest.json`, `game.config.json`, the sound passport,
+the math passport). A stand never reads a game's sources.
 
-## Live now
-
-**The Reactor** — a 6×5 periodic-table slot whose whole board lives inside a rusted glass tank:
-symbols settle under water behind a breathing surface, nozzles in the lid, coolant piped through
-the base, a painted lab backdrop behind it. The board, the symbols and their VFX are canvas-baked
-procedural PixiJS v8 — no sprite atlas, no Spine — with AVIF set-dressing and an alpha-channel
-WebM fire loop layered around them. Three math versions (`b`, `c`, `d`) behind one client.
-
-**SOLVENT** — a 6×5 / 25-line cascade slot built on reagent flasks. The board tumbles until
-nothing more can be taken off it: an explosion symbol clears the zone around itself for free, a
-detonator lifts every copy of the symbols it touches and pays for the whole group, and free spins
-swap the roster for value jars that a collector cashes in. Visually the opposite bet from
-The Reactor — a flat printed comic on newsprint, a screen-space halftone shader and `tint` instead
-of PBR and glow, vector-fit scenes and a tiered symbol atlas. Two math versions (`a`, `b`).
-
-Both games are pinned in the platform catalog, run on the same RGS framework and seal their payout
-path with the same framework primitive: a test fails the build the moment a money-moving file drifts
-out of the seal, and the seal's `compliance_version` is what the lab gets.
+Art is animated in Spine. Visual effects come only from the purchased RTFX pack, customised in
+After Effects and exported to Spine. Code does not draw effects.
 
 ## Repositories
 
-| Repo | What it is |
+| Repository | What it is |
 |---|---|
-| [`platform`](https://github.com/acidstates/platform) | The monorepo: `frameworks/` — `gamecore` (TS + PixiJS client), `gamemodule` (Python/FastAPI RGS), `audio` (sound passport) · `shared/` — protocol, core, ui, gc-sdk, brands, rng, mathengine, admin-ui, simbot · `tools/` — registry/catalog, vector-fit, guards, eslint-rules, pypi-index · `apps/` — statehub, betmanager (+ admin SPA), three authoring studios · `infra/` — nginx, oauth2-proxy, demo-gate · `docs/agent` — the agent knowledge base. |
-| [`the-reactor`](https://github.com/acidstates/the-reactor) | Flagship game — RGS backend + PixiJS client, one monorepo. |
-| [`solvent`](https://github.com/acidstates/solvent) | Second live game — cascade + flasks; own backend on the same `gamemodule` framework, comic-styled client. |
-| [`game-template`](https://github.com/acidstates/game-template) | Starter v1 for new game modules (template repo): one script renames every identifier, regenerates goldens and runs the new repo's backend gates green. Still the starter today. |
-| [`game-template-2.0`](https://github.com/acidstates/game-template-2.0) | The next starter, in progress: a flat six-folder tree (backend · client · GDD · QA · drawer · scratch), six real RTP math versions in two families, math passport inside the package, certification pack builder. Currently a **skeleton** — every file carries a three-line contract, no code yet; built on `gamemodule 0.36` once released. |
-| [`workflows`](https://github.com/acidstates/workflows) | Org-wide reusable GitHub Actions — all deploy logic lives here; working repos carry thin callers only. |
-| [`workspace`](https://github.com/acidstates/workspace) | Umbrella repo: org-wide agent rules (`CLAUDE.md`/`AGENTS.md`), org-level skills, cross-repo specs, the `game-template-2.0` plan and tracker, shared tooling. |
-| [`acid-states-website`](https://github.com/acidstates/acid-states-website) | [acidstates.com](https://acidstates.com) — the public site, static, deployed on merge. |
-| [`acidstates-architecture`](https://github.com/acidstates/acidstates-architecture) | Architecture maps of the platform and the games (six maps, served behind SSO). |
+| [`platform`](https://github.com/acidstates/platform) | The monorepo. `frameworks/`: `gamecore` (TS + PixiJS client), `gamemodule` (Python and FastAPI RGS), `audio` (sound passport). `shared/`: protocol, gr-core, gr-ui (the HUD kit and its design system), brands, drawer, simbot, qa, admin-ui. `apps/`: statehub, betmanager with its admin SPA, drawer, and three studios that are parked. `tools/`: registry, guards, mutation, pypi-index and more. `infra/`: nginx, oauth2-proxy, demo-gate. `docs/standards/` and `docs/agent/`: the rules for games and for agents. |
+| [`workflows`](https://github.com/acidstates/workflows) | Reusable GitHub Actions workflows for the whole organisation. All deploy logic lives here; game repositories only call it. It also holds `tools/sim_droplet.py`, which runs simulations on a temporary droplet. |
+| [`solvent-3`](https://github.com/acidstates/solvent-3), [`scythers`](https://github.com/acidstates/scythers), [`overpull`](https://github.com/acidstates/overpull) | The games. Each one has its backend, client, GDD, QA layer and drawer in one repository. |
+| [`game-template-2.0`](https://github.com/acidstates/game-template-2.0) | The starter for new games. |
+| [`workspace`](https://github.com/acidstates/workspace) | The umbrella repository: the rules for agents in all repositories (`CLAUDE.md`, `AGENTS.md`), organisation skills, cross-repository specs and shared tools. |
+| [`acid-states-website`](https://github.com/acidstates/acid-states-website) | [acidstates.com](https://acidstates.com), the public site. |
+| [`acidstates-architecture`](https://github.com/acidstates/acidstates-architecture) | The architecture maps of the platform and the games, behind GitHub-organisation SSO. |
+| [`the-reactor`](https://github.com/acidstates/the-reactor) | Retired. Reference code only. |
 
 ## Products
 
-| Surface | What it is |
+| Part | What it is |
 |---|---|
-| **gamemodule** | Python + FastAPI RGS: command router, two-phase wallet, round journal, compliance seal, invariant suites, and the CLIs — `acid-seal` (per-file hashes + `compliance_version` for the lab), `acid-shift` (replays cheat vectors from the math passport offline and answers OK / RISK / DEGRADED / STALE / CRASH), `acid-replay`, `acid-log-verify`. The passport report and the passport-driven cheat replay are in `main` and ship with 0.36.0. Any game attribute the router reads is declared, not discovered. |
-| **gamecore** | TS + PixiJS v8 client framework: a synchronous round kernel (`./kernel`, zero `await`), the event bus every game subscribes to, overlay axis, comic FX, copy/locale, vector-fit. Thin-renderer invariant: the board is drawn only from the server's `context[current]`. |
-| **audio** | The game's sound passport: manifest contract, validator, codegen and the `acid-audio` CLI; the `./manifest` subpath is headless so Python pipelines and the studios can import it. |
-| **simbot** | RTP and compliance simulation: `acid-simulate` prints the math passport (parsheet) per math version, 1M rounds per version in development, certification volumes by the lab procedure; `acid-math-gate` checks RTP corridors from a per-game `math_gate.json` in CI (100k rounds by default). |
-| **statehub** | QA stand — the game catalog with an embedded player, device mockups and test panels. |
-| **betmanager** | Accounts, wallets, ledger and cross-game analytics, with its `betmanager-admin` SPA behind GitHub-org SSO. |
-| **catalog** | The registry mapping every game to its pinned `{module, client}` and the math versions its backend will accept. |
-| **studios** | Three authoring stands, each with an MCP server so an agent can drive it headless: `symbol-landing-studio` (landing manners, effects, splashes, counter, voicing), `spin-animation-studio` (reel spin and its three sounds), `board-transformation-studio`. |
-| **vector-fit** | An SVG scene becomes a typed `layout.json`: the vector stays the source of coordinates, hit-zones and animations, a raster skin is fitted on top. (`vf-lab`, the browser authoring stand, was retired 2026-08-18 — the CLI is the way.) |
+| **gamemodule** | The Python and FastAPI RGS: command router, two-phase wallet, round journal, compliance seal, invariant suites. Its CLIs: `acid-seal` (per-file hashes and the `compliance_version` for the lab), `acid-shift` (replays the cheat vectors from the math passport), `acid-replay`, `acid-log-verify`, `acid-rng-dump`. |
+| **gamecore** | The TS and PixiJS v8 client framework: a synchronous round kernel, the event bus that each game subscribes to, the overlay axis, copy and locale. The client draws the board only from the server's state. |
+| **gr-core, gr-ui** | The shared client core and the HUD kit (`@acidstates/core`, `@acidstates/ui`). The HUD design system lives next to the kit. |
+| **audio** | The sound passport: the manifest contract, a validator, codegen and the `acid-audio` CLI. |
+| **simbot** | RTP and compliance simulation: `acid-simulate` prints the math passport for each math version; `acid-math-gate` keeps RTP inside its corridor in CI. |
+| **qa** | `acid-qa`: one entry point for scenario runs and smokes against a game. |
+| **drawer** | The round history that the player sees in the game, as certification requires. |
+| **statehub** | The QA stand: the game catalog with an embedded player, device mockups and test panels. |
+| **betmanager** | Accounts, wallets, ledger and cross-game analytics, with an admin SPA behind GitHub-organisation SSO. |
+| **catalog** | The registry that maps each game to its pinned `{module, client}` and the math versions its backend accepts. |
+| **studios** | Three authoring stands with MCP servers. They are parked since 2026-10-06, because they made effects in code. Effects now come from the RTFX pack through After Effects and Spine. |
 
 ## Published packages
 
-| Package | Registry | Version |
-|---|---|---|
-| `@acidstates/gamecore` | GitHub Packages | 2.9.3 |
-| `@acidstates/protocol` | GitHub Packages | 0.12.0 |
-| `@acidstates/core` | GitHub Packages | 0.6.1 |
-| `@acidstates/ui` | GitHub Packages | 2.2.3 |
-| `@acidstates/audio` | GitHub Packages | 0.9.0 |
-| `@acidstates/gc-sdk` | GitHub Packages | 0.2.8 |
-| `@acidstates/brands` | GitHub Packages | 0.1.0 |
-| `acidstates-gamemodule` | PEP 503 index on DO Spaces | 0.35.0 |
-| `acidstates-simbot` | PEP 503 index on DO Spaces | 0.13.1 |
+| Registry | Packages |
+|---|---|
+| GitHub Packages (npm, private to the organisation) | `@acidstates/gamecore`, `@acidstates/protocol`, `@acidstates/core`, `@acidstates/ui`, `@acidstates/audio`, `@acidstates/brands`, `@acidstates/drawer` |
+| PEP 503 index on DigitalOcean Spaces | `acidstates-gamemodule`, `acidstates-simbot`, `acidstates-qa` |
 
-Everything else in the platform workspace is `private: true` — deployed, never published.
+This page gives no version numbers. The registry is the source of truth: use
+`npm view <package> dist-tags` or the index. All other workspace packages are `private: true`:
+they deploy, they do not publish.
 
 ## How it ships
 
-Merging a PR into `main` builds and deploys — no manual SSH, no per-developer setup. The logic
-lives in one place, [`acidstates/workflows`](https://github.com/acidstates/workflows):
+A merge of a PR into `main` builds and deploys. There is no manual SSH and no setup for each
+developer. The logic lives in one place,
+[`acidstates/workflows`](https://github.com/acidstates/workflows):
 
 | Workflow | What it does |
 |---|---|
-| `ci-game` | PR gates — backend `uv sync + ruff + pyright + pytest`, client `typecheck + build + test` |
-| `build-push-image` | buildx → DigitalOcean Container Registry, tagged by commit SHA |
-| `deploy-container` | ship compose → pull by tag → up → healthcheck → auto-rollback → deploy tag |
-| `deploy-static` | build → backup → rsync → smoke → auto-restore → deploy tag |
-| `deploy-game` | orchestrator: diff-detect backend vs client → ci → build → deploy → register manifest, rebuild catalog |
-| `deploy-infra` | nginx + oauth2-proxy: `nginx -t` → reload → smoke every gated host → restore on any failure |
+| `ci-game` | PR gates: backend `uv sync`, `ruff`, `pyright`, `pytest`; client typecheck, build, test |
+| `build-push-image` | buildx to the DigitalOcean Container Registry, tagged by commit SHA |
+| `deploy-container` | pull by tag, compose up, health check, rollback on failure, deploy tag |
+| `deploy-static` | build, backup, rsync, smoke, restore on failure, deploy tag |
+| `deploy-game` | the orchestrator: finds what changed (backend or client), then CI, build, deploy, manifest registration and catalog rebuild |
+| `deploy-infra` | nginx and oauth2-proxy: `nginx -t`, reload, smoke of each gated host, restore on any failure |
+| `ondemand-runner` | makes sure the on-demand self-hosted runner droplet exists, then returns |
+| `reproducibility-check` | builds the image twice from one commit and requires the same digest |
+| `site-truth` | before a release, checks that the game's page on the website says what the game says about itself |
 
-A game declares *where* it deploys in its `game-manifest.json` `deploy` block — image, compose
-directory, healthcheck, client directory, smoke host. That block is the entire contract between a
-game repo and the org's CI: the template ships it as `CHANGE-ME` on purpose, and CI refuses to ship
-an unfilled manifest. Package publishing is separate: `release.yml` publishes TS packages through
-changesets when a Version PR lands and idempotently uploads the Python wheels to the Spaces index.
+A game declares *where* it deploys in the `deploy` block of its `game-manifest.json`. That block
+is the full contract between a game repository and the organisation's CI. CI does not ship a
+manifest that still has its `CHANGE-ME` values.
+
+Simulations run on a temporary DigitalOcean droplet that `tools/sim_droplet.py` creates for each
+run. They never run on a developer's machine and never on the CI host.
 
 ## What proves it
 
-- **Compliance seal.** Each game declares `compliance_files`; the framework hashes them into a
-  `compliance_version`, the lab gets per-file hashes from `acid-seal report`, and a test fails the
-  build the moment a payout-path file leaves the set.
-- **Determinism.** The server RNG is `hmac-sha256-ctr/1`, seeded per round; golden tests replay
-  committed seeds and pin the `compliance_version` per math version.
-- **Passport ≠ prose.** The simulator prints the math passport, the framework parses it back and
-  cross-checks it against the settings (`validate_manifest`); `acid-shift` proves every cheat vector
-  in the passport actually reproduces; `acid-math-gate` holds RTP inside its corridor in CI.
-- **Guards that bite.** Invariant suites with positive controls run on every step; a document that
-  describes the wire (protocol fields, sound passport) has a machine checker that fails when the
-  code drifts.
-- **Mutations, not green runs.** A green suite proves nothing by itself: `gamecore` breaks its
-  kernel 42 ways in CI and requires the *named* guard to fail; on the Python side every new guard is
-  proven by the mutation named in its docstring before it is merged, with a platform harness
-  (`tools/mutation`) that reverts by hash. Historically these found tautological invariants, dead
-  defences and real kernel defects that all tests had passed over.
-- **Scale of the net.** ~1340 headless tests in `gamecore` (strict `tsc`, no GPU), 1500+ in
-  `gamemodule`, both matrices green on every PR.
+- **Compliance seal.** Each game declares `compliance_files`. The framework hashes them into a
+  `compliance_version`, and the lab gets the per-file hashes from `acid-seal`. A test fails the
+  build when a file on the payout path leaves the set.
+- **Determinism.** The server RNG is `hmac-sha256-ctr/1`, seeded per round. Golden tests replay
+  committed seeds and pin the `compliance_version` for each math version.
+- **The passport is data.** The simulator prints the math passport, and the framework parses it
+  back and checks it against the settings. `acid-shift` proves that each cheat vector in the
+  passport reproduces. `acid-math-gate` keeps RTP inside its corridor in CI.
+- **Guards that bite.** Invariant suites have positive controls. A document that describes the
+  wire (protocol fields, the sound passport) has a machine checker that fails when the code drifts.
+- **Mutations, not only green runs.** A green suite proves nothing alone. `gamecore` breaks its
+  kernel on purpose in CI and requires the *named* guard to fail. On the Python side, the mutation
+  harness in `tools/mutation` proves each new guard before it is merged.
 
-## Agent-ready by design
+## Ready for agents
 
-The codebase ships its own operating manual for AI coding agents: `CLAUDE.md`/`AGENTS.md`
-conventions cascading from the umbrella repo down into every working repo, a battle-tested PixiJS
-hero-VFX style guide distilled from real debugging rounds (`platform → docs/agent`, mandatory before
-any drawing code), a machine-readable repo map and a charter of locked decisions, the official
-[pixijs-skills](https://github.com/pixijs/pixijs-skills) vendored into `.claude/skills/` with org
-overlays verified against the installed `pixi.js@8.19.0` — and three authoring studios exposed as
-MCP servers, so an agent's first drawing or sound session already has hands and eyes.
-
-## Next
-
-- **`gamemodule 0.36.0`** — the game-template-2.0 wave: circular reel windows, the reference's
-  action vocabulary, passport built by the framework, cheat replay, board-trigger guards, money-safe
-  migrations, game-declared persistent keys (three of four slices merged; the last slice and the
-  release are next).
-- **`simbot 0.14`** — passport in the reference layout, HTML passport, cheat collection.
-- **`game-template-2.0`** — from skeleton to a green first commit: backend on the released
-  packages, then client, GDD, QA and drawer folders.
-- **`gamecore` next major** — the old `App`/`fsm` engine leaves the root export; the kernel stays
-  the only producer of the event bus, game subscribers change nothing.
+The codebase has its own manual for AI coding agents. `CLAUDE.md` and `AGENTS.md` go from the
+umbrella repository down into each working repository. The platform keeps the game integration
+standard (`docs/standards/`) and the agent standards for asset preparation, animation and PixiJS
+drawing (`docs/agent/`). An agent reads them before it starts work.
 
 ---
 

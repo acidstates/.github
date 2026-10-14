@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Генератор фирменной схемы «Platform at a glance» для витрины организации.
+"""Generator of the "Platform at a glance" diagram for the organisation profile.
 
-Одна геометрия — две темы (light/dark), подключаются в profile/README.md через <picture>,
-как логотип ACID//STATES. Схема печётся рукописным SVG, а не mermaid, намеренно: витрина
-GitHub не рендерит mermaid вовсе, а стилизовать его под канон бренда (бумага/чернила,
-кислотный #C6F000, жёсткие офсет-тени, халфтон) нельзя нигде. Примитивы и палитры — те же,
-что у `frameworks/gamecore/tools/render_round_diagram.py` в acidstates/platform.
+One geometry, two themes (light and dark). profile/README.md includes them through <picture>,
+the same way as the ACID//STATES logo. The diagram is a hand-written SVG and not mermaid on
+purpose: the GitHub organisation profile does not render mermaid, and mermaid cannot follow the
+brand canon (paper and ink, acid #C6F000, hard offset shadows, halftone dots).
 
-Запуск (из корня репозитория .github):
-    python3 profile/tools/render_platform_diagram.py          # → profile/assets/
-    python3 profile/tools/render_platform_diagram.py <dir>    # → куда сказали
+Run from the root of the .github repository:
+    python3 profile/tools/render_platform_diagram.py          # writes to profile/assets/
+    python3 profile/tools/render_platform_diagram.py <dir>    # writes to <dir>
 
-Меняется устройство платформы — правь ЗДЕСЬ и перегенерируй оба файла; руками SVG не трогать.
+When the organisation changes, change THIS file and render both themes again.
+Do not edit the SVG files by hand.
 """
 import pathlib
 import sys
@@ -75,7 +75,7 @@ def arrow(pts, p, color=None, width=2.6, dash=None, marker="m"):
 
 
 def box(o, x, y, w, lines, p, title_size=13, sw=1.8, shadow=False):
-    """Карточка: жирный заголовок + строки описания. Возвращает высоту."""
+    """A card: a bold title and description lines. Returns the card height."""
     hh = 30 + 15 * len(lines[1:]) + (4 if len(lines) > 1 else 0)
     if shadow:
         o.append(f'<rect x="{x+5}" y="{y+5}" width="{w}" height="{hh}" fill="{p["shadow"]}" opacity="{p["shadow_op"]}"/>')
@@ -90,9 +90,9 @@ def build(p, theme):
     W, H = 1280, 790
     o = []
     o.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
-             f'role="img" aria-label="Platform at a glance — the monorepo publishes versioned packages, '
-             f'game repos install them, a merge to main ships through acidstates/workflows onto the droplet, '
-             f'game manifests feed the catalog and the stands">')
+             f'role="img" aria-label="Platform at a glance: the monorepo publishes versioned packages, '
+             f'game repos install them, a merge to main deploys the dev instance through acidstates/workflows, '
+             f'a release goes out on the owner\'s tag, game manifests feed the catalog and the stands">')
     o.append('<title>Platform at a glance · ACID//STATES</title>')
     o.append(f'''<defs>
 <marker id="m" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
@@ -106,42 +106,43 @@ def build(p, theme):
     o.append('<rect x="0" y="0" width="560" height="150" fill="url(#dots)"/>')
     o.append(f'<rect x="900" y="{H-180}" width="380" height="180" fill="url(#dots)"/>')
 
-    # ── штамп-заголовок ──────────────────────────────────────────
+    # ── title stamp ──────────────────────────────────────────
     o.append('<g transform="rotate(-1.6 250 60)">'
              f'<rect x="46" y="36" width="452" height="52" fill="{p["shadow"]}" opacity="{p["shadow_op"]}"/>'
              f'<rect x="40" y="30" width="452" height="52" fill="{p["acid"]}" stroke="{p["ink"]}" stroke-width="3"/>'
              + text(64, 66, "PLATFORM AT A GLANCE", 27, p, p["acidink"], w="800", fam=SANS, ls="0.5") + "</g>")
-    o.append(eyebrow(46, 112, "acidstates · package → module → own repo → merge to main → live", p))
+    o.append(eyebrow(46, 112, "acidstates · package → game repo → merge to main → dev → owner's tag → release", p))
 
     hot_eyebrow = p["acid"] if theme == "dark" else p["hot"]
 
-    # ── PLATFORM — монорепо ──────────────────────────────────────
+    # ── PLATFORM: the monorepo ──────────────────────────────────────
     o.append(panel(40, 170, 270, 480, p, rot=-0.7))
     o.append(eyebrow(60, 198, "platform · the monorepo", p, p["srv"]))
     y = 212
     y += box(o, 60, y, 230, ["frameworks/", "gamecore · TS + PixiJS v8 client", "gamemodule · Python/FastAPI RGS", "audio · the sound passport"], p) + 10
-    y += box(o, 60, y, 230, ["shared/", "protocol · core · ui · gc-sdk", "brands · rng · mathengine · simbot"], p) + 10
-    y += box(o, 60, y, 230, ["apps/ · stands", "statehub · betmanager + admin", "3 studios, each an MCP server"], p) + 10
-    y += box(o, 60, y, 230, ["tools/ · infra/", "registry · vector-fit · guards", "nginx · oauth2-proxy · demo-gate"], p) + 10
-    o.append(text(60, 632, "docs/agent — the operating manual", 9.5, p, p["ink3"]))
+    y += box(o, 60, y, 230, ["shared/", "protocol · gr-core · gr-ui · brands", "drawer · simbot · qa · admin-ui"], p) + 10
+    y += box(o, 60, y, 230, ["apps/ · stands", "statehub · betmanager + admin · drawer", "3 studios: parked since 2026-10-06"], p) + 10
+    y += box(o, 60, y, 230, ["tools/ · infra/", "registry · guards · mutation · pypi-index", "nginx · oauth2-proxy · demo-gate"], p) + 10
+    o.append(text(60, 632, "docs/standards · docs/agent: the rules", 9.5, p, p["ink3"]))
     o.append("</g>")
 
     # ── PACKAGES → GAMES ─────────────────────────────────────────
     o.append(panel(360, 160, 520, 490, p, rot=0.0))
     o.append(eyebrow(382, 190, "packages → games · one module per game", p, hot_eyebrow))
     o.append(text(858, 190, "SemVer", 10.5, p, p["ink3"], anchor="end"))
-    # published — пунктирная внутренняя панель
+    # published: the dashed inner panel
     o.append(panel(382, 206, 476, 144, p, fill=p["panel2"], dash="7 5", sw=2))
     o.append(eyebrow(400, 230, "published · versioned", p))
     o.append(f'<rect x="400" y="242" width="216" height="92" fill="{p["panel"]}" stroke="{p["ink"]}" stroke-width="1.8"/>')
     o.append(text(414, 263, "GitHub Packages", 13, p, w="bold"))
     o.append(text(414, 281, "@acidstates/gamecore · protocol", 10.5, p, p["ink2"]))
     o.append(text(414, 296, "core · ui · audio", 10.5, p, p["ink2"]))
-    o.append(text(414, 311, "gc-sdk · brands", 10.5, p, p["ink2"]))
+    o.append(text(414, 311, "brands · drawer", 10.5, p, p["ink2"]))
     o.append(f'<rect x="626" y="242" width="214" height="92" fill="{p["panel"]}" stroke="{p["ink"]}" stroke-width="1.8"/>')
     o.append(text(640, 263, "PEP 503 · DO Spaces", 13, p, w="bold"))
     o.append(text(640, 281, "acidstates-gamemodule", 10.5, p, p["ink2"]))
     o.append(text(640, 296, "acidstates-simbot", 10.5, p, p["ink2"]))
+    o.append(text(640, 311, "acidstates-qa", 10.5, p, p["ink2"]))
     o.append("</g>")
     # installed by → game repos
     o.append(arrow([(620, 350), (620, 382)], p, color=p["hot"], marker="h"))
@@ -150,11 +151,12 @@ def build(p, theme):
     o.append(f'<rect x="382" y="384" width="466" height="150" fill="{p["panel2"]}" stroke="{p["ink"]}" stroke-width="2.4"/>')
     o.append(text(396, 407, "game repos", 13.5, p, w="bold"))
     o.append(text(396, 425, "RGS backend + PixiJS client · sealed payout path (compliance_files)", 10.5, p, p["ink2"]))
-    o.append(chip(396, 440, 104, "the-reactor", p)); o.append(chip(506, 440, 74, "solvent", p))
-    o.append(chip(586, 440, 118, "game-template", p)); o.append(chip(710, 440, 128, "game-template-2.0", p, hot=True))
-    o.append(text(396, 486, "math versions per game · game-manifest.json declares the deploy target", 10.5, p, p["ink2"]))
-    o.append(text(396, 502, "game.config.json · sound passport · math passport — facts as data,", 10.5, p, p["ink2"]))
-    o.append(text(396, 517, "never read from a game's sources by a stand", 10.5, p, p["ink2"]))
+    o.append(chip(396, 440, 112, "solvent-3 · live", p, hot=True)); o.append(chip(514, 440, 84, "scythers", p))
+    o.append(chip(604, 440, 80, "overpull", p)); o.append(chip(690, 440, 148, "game-template-2.0", p))
+    o.append(text(396, 480, "game-template-2.0 is the starter: every new game is cut from it", 10.5, p, p["ink2"]))
+    o.append(text(396, 496, "game-manifest.json · game.config.json · sound and math passports:", 10.5, p, p["ink2"]))
+    o.append(text(396, 511, "facts as data, a stand never reads a game's sources", 10.5, p, p["ink2"]))
+    o.append(text(396, 526, "art in Spine · effects from the RTFX pack in After Effects", 10.5, p, p["ink2"]))
     # catalog
     o.append(arrow([(470, 534), (470, 568)], p, width=2.2))
     o.append(edge_label(482, 559, "game-manifest.json", p))
@@ -168,7 +170,7 @@ def build(p, theme):
 
     # ── SHIP ─────────────────────────────────────────────────────
     o.append(panel(930, 160, 310, 490, p, rot=0.7))
-    o.append(eyebrow(952, 190, "acidstates/workflows · merge to main", p))
+    o.append(eyebrow(952, 190, "workflows · merge to main", p))
     o.append(f'<rect x="952" y="206" width="266" height="72" fill="{p["panel2"]}" stroke="{p["ink"]}" stroke-width="2.4"/>')
     o.append(text(966, 229, "ci-game", 13.5, p, w="bold"))
     o.append(text(966, 247, "uv sync · ruff · pyright · pytest", 10.5, p, p["ink2"]))
@@ -181,33 +183,33 @@ def build(p, theme):
     o.append(text(966, 369, "deploy/<target>/… tag after the fact", 10.5, p, p["ink2"]))
     o.append(f'<rect x="952" y="406" width="266" height="72" fill="{p["panel2"]}" stroke="{p["ink"]}" stroke-width="1.8"/>')
     o.append(text(966, 429, "stands", 13, p, w="bold"))
-    o.append(text(966, 447, "statehub · betmanager · studios", 10.5, p, p["ink2"]))
+    o.append(text(966, 447, "statehub · betmanager · drawer", 10.5, p, p["ink2"]))
     o.append(text(966, 463, "read the catalog, not the code", 10.5, p, p["ink2"]))
     o.append(arrow([(1085, 386), (1085, 404)], p, width=2))
     o.append(arrow([(1085, 478), (1085, 506)], p, color=p["hot"], marker="h"))
-    # LIVE — кислотная плашка
+    # DEV and RELEASE: the acid plate
     o.append(f'<rect x="957" y="513" width="266" height="88" fill="{p["shadow"]}" opacity="{p["shadow_op"]}"/>')
     o.append(f'<rect x="952" y="508" width="266" height="88" fill="{p["acid"]}" stroke="{p["ink"]}" stroke-width="2.4"/>')
-    o.append(text(966, 531, "droplet · live", 13.5, p, p["acidink"], w="800"))
-    o.append(text(966, 549, "games · statehub · betmanager · studios", 10.5, p, p["acidink"]))
-    o.append(text(966, 565, "nginx + oauth2-proxy", 10.5, p, p["acidink"]))
-    o.append(text(966, 581, "GitHub-org SSO on internal hosts", 10.5, p, p["acidink"]))
+    o.append(text(966, 531, "dev on merge · release on tag", 13.5, p, p["acidink"], w="800"))
+    o.append(text(966, 549, "merge to main → <slug>-dev instance", 10.5, p, p["acidink"]))
+    o.append(text(966, 565, "owner's tag → release", 10.5, p, p["acidink"]))
+    o.append(text(966, 581, "nginx + oauth2-proxy · GitHub-org SSO", 10.5, p, p["acidink"]))
     o.append(text(952, 626, "rollback is a fallback, never the first response", 9.5, p, p["ink3"]))
     o.append("</g>")
 
-    # ── магистральные стрелки между панелями ─────────────────────
+    # ── main arrows between the panels ─────────────────────
     o.append(arrow([(290, 262), (330, 272), (382, 280)], p, color=p["hot"], width=3, marker="h"))
     o.append(edge_label(336, 258, "publishes", p, anchor="middle"))
     o.append(arrow([(290, 600), (330, 640), (410, 674), (700, 690), (950, 634)], p, width=2.2, dash="5 4"))
     o.append(edge_label(660, 708, "platform: merge to main ships the stands", p, anchor="middle"))
     o.append(arrow([(848, 416), (890, 330), (952, 250)], p, color=p["hot"], width=3, marker="h"))
-    o.append(edge_label(872, 366, "game: merge to main", p, anchor="end"))
+    o.append(edge_label(862, 366, "game: merge to main", p, anchor="end"))
     o.append(arrow([(682, 575), (900, 520), (952, 448)], p, width=2.2, dash="6 5"))
-    o.append(edge_label(880, 548, "slug → {module, client}", p, anchor="middle"))
+    o.append(edge_label(790, 548, "slug → {module, client}", p, anchor="middle"))
 
-    # подпись
-    o.append(text(40, H - 48, "SemVer tags version packages; main ships services — every accepted deploy is marked with a deploy/<target> tag afterwards", 10.5, p, p["ink3"]))
-    o.append(text(40, H - 30, "the seal: a test fails the build the moment a money-moving file drifts out of compliance_files; the lab gets compliance_version", 10.5, p, p["ink3"]))
+    # footer
+    o.append(text(40, H - 48, "SemVer tags version packages; a merge to main deploys the dev instance; a release goes out only on the owner's tag", 10.5, p, p["ink3"]))
+    o.append(text(40, H - 30, "the seal: a test fails the build when a money-moving file drifts out of compliance_files; the lab gets compliance_version", 10.5, p, p["ink3"]))
     o.append("</svg>")
     return "\n".join(o)
 
